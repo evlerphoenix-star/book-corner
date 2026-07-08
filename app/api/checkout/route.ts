@@ -1,33 +1,31 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
-
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const { email, productName, amount } = await req.json();
+    const body = await request.json();
+    const { amount, items } = body;
 
-    // Generate a random 4-digit reference appended to BC-
-    const randomCode = Math.floor(1000 + Math.random() * 9000);
-    const reference = `BC-${randomCode}`;
+    const timestamp = Date.now().toString().slice(-4);
+    const randomHex = Math.floor(1000 + Math.random() * 9000);
+    const reference = `PHX-BC-${timestamp}-${randomHex}`;
 
-    const order = await prisma.bookOrder.create({
-      data: {
-        customerEmail: email,
-        productName: productName,
-        reference: reference,
-        amount: parseInt(amount),
-        status: 'PENDING'
-      }
-    });
+    console.log(`[SOVEREIGN CHECKOUT INITIATED]`);
+    console.log(`Reference: ${reference}`);
+    console.log(`Amount: R${amount}`);
+    console.log(`Items:`, JSON.stringify(items));
+    console.log(`Timestamp: ${new Date().toISOString()}`);
 
     return NextResponse.json({ 
       success: true, 
-      reference: order.reference,
-      message: `Please deposit exactly ${amount} rand using reference ${order.reference}` 
-    });
+      reference,
+      amount
+    }, { status: 200 });
 
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
+    console.error('[CHECKOUT ERROR ANOMALY]:', error);
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Internal processing failure' 
+    }, { status: 500 });
   }
 }
