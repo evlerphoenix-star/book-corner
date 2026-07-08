@@ -14,23 +14,20 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen font-sans flex flex-col bg-[#4a3520] relative">
+    <main className="min-h-screen font-sans flex flex-col relative bg-[#4a3520]">
       
-      {}
+      {/* HEADER SECTION - White background, logo left */}
       <header className="bg-white w-full px-6 py-4 flex items-center justify-between border-b border-zinc-200 z-20 shrink-0 shadow-sm relative">
-        <div className="flex items-center w-1/3">
+        <div className="flex items-center gap-4">
           <img
             src="/phoenix-logo.svg"
             alt="Phoenix Logo"
-            style={{ height: '100px', width: 'auto', maxWidth: '350px', objectFit: 'contain' }} 
+            className="h-[100px] w-auto object-contain" 
           />
         </div>
-
-        <div className="flex items-center justify-center w-1/3 text-black font-semibold text-lg tracking-wide">
-          Book Corner
-        </div>
-
-        <div className="flex items-center justify-end w-1/3 gap-4 text-[11px] text-zinc-600 font-medium hidden md:flex">
+        
+        <div className="flex items-center justify-end gap-6 text-sm font-medium text-zinc-600 hidden md:flex">
+          <span className="font-bold text-black text-lg">Book Corner</span>
           <a href="#" className="hover:text-blue-600 transition">About</a>
           <div className="flex items-center gap-2">
             <span>🔒</span>
@@ -44,10 +41,10 @@ export default function Home() {
         </div>
       </header>
 
-      {}
-      <section className="bg-[#3170a7] text-white py-12 px-6 relative z-10 shadow-md shrink-0">
+      {/* BLUE BANNER */}
+      <section className="bg-[#3170a7] text-white py-8 px-6 relative z-10 shrink-0 border-b-4 border-[#255682]">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-3 drop-shadow-sm tracking-wide">
+          <h2 className="text-3xl font-bold mb-2 tracking-wide">
             Specialist Educational Literature
           </h2>
           <p className="opacity-90 text-sm italic font-light tracking-wide">
@@ -56,7 +53,7 @@ export default function Home() {
         </div>
       </section>
 
-      {}
+      {/* WOOD GRID BACKGROUND */}
       <section
         className="flex-1 py-12 px-8 relative shadow-inner"
         style={{
@@ -76,9 +73,9 @@ export default function Home() {
               <div 
                 key={book.id} 
                 onClick={() => setCheckoutOpen(true)}
-                className="bg-white p-4 rounded-sm shadow-2xl w-[260px] h-[360px] flex flex-col items-center transition-transform hover:-translate-y-2 cursor-pointer"
+                className="bg-white p-4 rounded-sm shadow-2xl w-[260px] flex flex-col items-center transition-transform hover:-translate-y-2 cursor-pointer"
               >
-                <div className="w-full h-full bg-zinc-100 relative overflow-hidden border border-zinc-200 mb-4 flex items-center justify-center text-xs text-zinc-400">
+                <div className="w-full bg-zinc-100 relative overflow-hidden border border-zinc-200 mb-4 flex items-center justify-center text-xs text-zinc-400 aspect-[3/4]">
                   <img 
                     src={book.src} 
                     alt={book.alt} 
@@ -86,48 +83,61 @@ export default function Home() {
                     onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} 
                   />
                 </div>
-                <div className="text-yellow-400 text-xl tracking-widest pb-2">★★★★★</div>
+                <div className="text-yellow-400 text-xl tracking-widest pb-1">★★★★★</div>
               </div>
             ))}
-
-            <div className="border-2 border-dashed border-zinc-400/30 bg-[#4a3520]/40 w-[260px] h-[360px] flex flex-col items-center justify-end pb-6 text-zinc-400 relative shadow-lg">
-               <div className="absolute inset-0 flex items-center justify-center transform -rotate-45 font-bold tracking-widest text-2xl opacity-30">
-                 EDITING PHASE
-               </div>
-               <div className="text-xl tracking-widest opacity-30 relative z-10">☆☆☆☆☆</div>
-            </div>
+            {/* The editing phase placeholder has been completely removed */}
           </div>
         </div>
       </section>
 
-      {}
+      {/* CHECKOUT SIDEBAR OVERLAY - Using fixed positioning so it floats over the UI */}
       {checkoutOpen && (
-        <div className="fixed top-0 right-0 w-full md:w-96 h-full bg-zinc-950 text-white z-50 shadow-2xl flex flex-col border-l border-zinc-800 animate-in slide-in-from-right duration-300">
-          <div className="p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-900">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">Phoenix Publishing</span>
-              <h2 className="text-xl font-bold uppercase tracking-wide mt-1">Sovereign Checkout</h2>
+        <>
+          {/* Dark Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/60 z-40 transition-opacity" 
+            onClick={() => setCheckoutOpen(false)}
+          ></div>
+          
+          {/* Sidebar */}
+          <div className="fixed top-0 right-0 w-full md:w-96 h-full bg-[#3a2a18] text-white z-50 shadow-2xl flex flex-col border-l border-[#5c4428] animate-in slide-in-from-right duration-300">
+            <div className="p-6 border-b border-[#5c4428] flex justify-between items-center bg-[#2c1f11]">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold tracking-widest text-yellow-500 uppercase">Phoenix Publishing</span>
+                <h2 className="text-xl font-bold uppercase tracking-wide mt-1">Sovereign Checkout</h2>
+              </div>
+              <button 
+                onClick={() => setCheckoutOpen(false)} 
+                className="text-zinc-400 hover:text-white bg-black/20 hover:bg-black/40 px-3 py-1 rounded-full text-sm transition"
+              >
+                Close ✕
+              </button>
             </div>
-            <button 
-              onClick={() => setCheckoutOpen(false)} 
-              className="text-zinc-400 hover:text-white bg-zinc-800 px-3 py-1 rounded-full text-sm transition"
-            >
-              Close ✕
-            </button>
-          </div>
-          <div className="p-6 flex-1 flex flex-col">
-            <p className="text-sm text-zinc-300 leading-relaxed mb-8">
-              Navigate the landscape with ease. Step-by-step manual walks you through claiming benefits without the usual structural friction.
-            </p>
-            <div className="border-t border-b border-zinc-800 py-4 mb-8 flex justify-between items-center">
-              <span className="font-medium text-zinc-300">Total</span>
-              <span className="text-xl font-bold text-white">R49.50</span>
+            
+            <div className="p-6 flex-1 flex flex-col">
+              <p className="text-sm text-zinc-300 leading-relaxed mb-8">
+                Navigate the landscape with ease. Step-by-step manual walks you through claiming benefits without the usual structural friction.
+              </p>
+              
+              <div className="bg-black/20 p-4 rounded-lg mb-8 border border-black/30">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-zinc-400 text-sm">Selected Item</span>
+                  <span className="font-medium text-white">eBook Guide</span>
+                </div>
+                <div className="border-t border-[#5c4428] my-3"></div>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-zinc-300">Total</span>
+                  <span className="text-2xl font-bold text-yellow-500">R49.50</span>
+                </div>
+              </div>
+
+              <button className="w-full bg-white text-black font-bold py-4 rounded-lg hover:bg-zinc-200 transition shadow-[0_0_15px_rgba(255,255,255,0.1)] text-lg mt-auto">
+                Generate EFT Invoice
+              </button>
             </div>
-            <button className="w-full bg-white text-black font-bold py-4 rounded hover:bg-zinc-200 transition shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-              Generate EFT Invoice
-            </button>
           </div>
-        </div>
+        </>
       )}
     </main>
   );
