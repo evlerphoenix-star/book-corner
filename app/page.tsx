@@ -3,8 +3,6 @@
 import { useState } from "react";
 
 export default function Home() {
-  const [selectedBook, setSelectedBook] = useState<string | null>(null);
-
   const books = [
     { id: "before-you-accept", src: "/before-you-accept.jpg", alt: "Before You Accept" },
     { id: "sars-guide", src: "/filing-system.jpg", alt: "SARS Audit-Ready" },
@@ -14,78 +12,57 @@ export default function Home() {
   ];
 
   return (
-    <main className="h-screen w-screen flex flex-col overflow-hidden bg-white text-zinc-900">
-      <div className="flex-1 flex overflow-hidden">
-        {selectedBook && (
-          <div className="w-1/3 min-w-[320px] max-w-[450px] border-r border-zinc-200 bg-zinc-50 p-8 flex flex-col overflow-y-auto animate-in slide-in-from-left duration-300 z-20 shadow-lg">
-            <button
-              onClick={() => setSelectedBook(null)}
-              className="self-start text-xs bg-zinc-100 text-zinc-600 px-3 py-1.5 rounded-full hover:bg-zinc-200 transition mb-8"
-            >
-              ✕ Close Checkout
-            </button>
-            <div className="space-y-4">
-              <p className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">PHOENIX PUBLISHING</p>
-              <h2 className="text-2xl font-bold leading-tight uppercase">Sovereign Publication</h2>
-              <p className="text-sm text-zinc-600">Navigate the landscape with ease. Step-by-step manual walks you through claiming benefits without the usual structural friction.</p>
-              <div className="pt-6 mt-6 border-t border-zinc-200">
-                <p className="text-2xl font-bold">R49.50</p>
-                <button className="mt-6 w-full py-4 bg-zinc-900 text-white font-bold text-sm hover:bg-black transition-colors">
-                  Generate EFT Invoice
+    <main className="min-h-screen bg-white text-zinc-900 font-sans">
+      {/* HEADER SECTION */}
+      <header className="px-6 py-8 border-b border-zinc-100">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <img src="/phoenix-logo.svg" alt="Phoenix Publishing" className="h-12 w-auto" />
+            <div className="border-l border-zinc-200 pl-4">
+              <h1 className="text-xl font-bold tracking-tight">PHOENIX</h1>
+              <p className="text-xs text-zinc-500 uppercase tracking-widest">Sovereign Publications</p>
+            </div>
+          </div>
+          <nav className="flex gap-6 text-sm font-medium">
+            <a href="#" className="hover:text-blue-600 transition">Library</a>
+            <a href="#" className="hover:text-blue-600 transition">Audit Readiness</a>
+            <a href="#" className="bg-zinc-900 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition">Get Assistance</a>
+          </nav>
+        </div>
+      </header>
+
+      {/* HERO / CONTENT SECTION */}
+      <section className="max-w-7xl mx-auto px-6 py-16">
+        <h2 className="text-4xl font-extrabold mb-12">Specialist Knowledge Resources</h2>
+        
+        {/* GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {books.map((book) => (
+            <div key={book.id} className="group border border-zinc-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300">
+              <div className="aspect-[3/4] bg-zinc-50 relative overflow-hidden">
+                <img 
+                  src={book.src} 
+                  alt={book.alt} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="font-bold text-lg mb-2">{book.alt}</h3>
+                <p className="text-sm text-zinc-600 mb-6">Expert guidance for navigating complex tax and audit landscapes.</p>
+                <button className="w-full py-3 border border-zinc-900 rounded-lg font-bold hover:bg-zinc-900 hover:text-white transition">
+                  Access Guide
                 </button>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* LOGO DISPLAY MATRIX - Aligned Left */}
-        <div className="flex-1 flex flex-col items-start justify-center p-12 relative z-10">
-          <div
-            className={`w-full flex justify-start transition-all duration-500 ease-out ${
-              selectedBook ? 'max-w-[150px]' : 'max-w-lg'
-            }`}
-          >
-            <img
-              src="/phoenix-logo.svg"
-              alt="Phoenix Publishing"
-              className="w-full h-auto object-contain"
-            />
-          </div>
-          <div className="mt-6">
-            <h1 className="text-3xl font-bold tracking-tight uppercase">BOOK CORNER</h1>
-            <p className="text-sm text-zinc-500 tracking-widest uppercase mt-1">SOVEREIGN CHECKOUT</p>
-          </div>
+          ))}
         </div>
-      </div>
+      </section>
 
-      <div className="w-full bg-[#4a80c2] text-center py-2.5 border-y border-[#3a6ba8] shrink-0 z-30 shadow-md">
-        <h3 className="text-sm font-bold text-white mb-0.5">Specialist Educational Literature</h3>
-        <p className="text-[10px] text-blue-100 uppercase tracking-wide">Expanding horizons through researched publications, technical guides, and specialized knowledge resources.</p>
-      </div>
-
-      <div className="h-[280px] bg-zinc-100 p-4 flex gap-4 overflow-x-auto border-t border-zinc-200 shrink-0 z-30">
-        {books.map((book) => (
-          <div
-            key={book.id}
-            onClick={() => setSelectedBook(book.id)}
-            className={`cursor-pointer flex-shrink-0 w-40 lg:w-44 transition-all duration-300 hover:-translate-y-2 ${
-              selectedBook === book.id ? 'ring-2 ring-[#4a80c2] shadow-xl scale-105' : 'opacity-85 hover:opacity-100'
-            }`}
-          >
-            <div className="w-full h-full bg-white flex items-center justify-center overflow-hidden shadow border border-zinc-200 relative">
-              <img
-                src={book.src}
-                alt={book.alt}
-                className="w-full h-full object-cover relative z-10"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
-              <span className="text-[10px] text-zinc-400 absolute bottom-2 left-2 z-0 truncate w-[90%]">{book.alt}</span>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* FOOTER */}
+      <footer className="border-t border-zinc-100 mt-20 py-12 text-center text-zinc-400 text-sm">
+        <p>© 2026 Phoenix Publishing. Sovereign tax and audit navigation.</p>
+      </footer>
     </main>
   );
 }
