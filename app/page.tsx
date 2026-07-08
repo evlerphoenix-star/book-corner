@@ -1,20 +1,28 @@
 "use client";
 
+import { useState } from "react";
+
 export default function Home() {
+  const books = [
+    { id: "sars-guide", src: "/filing-system.jpg", alt: "SARS Audit-Ready" },
+    { id: "uif-guide", src: "/uif-guide.jpg", alt: "UIF Survival Guide" },
+    { id: "before-you-accept", src: "/before-you-accept.jpg", alt: "Before You Accept" },
+    { id: "missing-link", src: "/missing-link.jpg", alt: "Missing Link" },
+    { id: "disability-tax", src: "/disability-tax.jpg", alt: "Disability Tax Benefits" },
+  ];
+
   return (
     <main className="min-h-screen font-sans flex flex-col bg-[#4a3520]">
       
-      {}
       {/* HEADER SECTION - White */}
-      <header className="bg-white w-full px-6 py-4 flex items-center justify-between border-b border-zinc-200 z-20 shrink-0">
+      <header className="bg-white w-full px-6 py-4 flex items-center justify-between border-b border-zinc-200 z-20 shrink-0 shadow-sm">
         
-        {/* Left: Logo - STRICTLY BOUNDED to prevent layout explosion */}
+        {/* Left: Logo - STRICTLY BOUNDED with inline styles to prevent explosion */}
         <div className="flex items-center w-1/3">
           <img
             src="/phoenix-logo.svg"
             alt="Phoenix Logo"
-            className="object-contain"
-            style={{ height: '50px', maxWidth: '100%' }} 
+            style={{ height: '60px', width: 'auto', maxWidth: '200px', objectFit: 'contain' }} 
           />
         </div>
 
@@ -24,7 +32,7 @@ export default function Home() {
         </div>
 
         {/* Right: Links */}
-        <div className="flex items-center justify-end w-1/3 gap-4 text-[11px] text-zinc-600 font-medium">
+        <div className="flex items-center justify-end w-1/3 gap-4 text-[11px] text-zinc-600 font-medium hidden md:flex">
           <a href="#" className="hover:text-blue-600 transition">About</a>
           <div className="flex items-center gap-2">
             <span>🔒</span>
@@ -38,7 +46,6 @@ export default function Home() {
         </div>
       </header>
 
-      {}
       {/* BLUE BANNER SECTION */}
       <section className="bg-[#3170a7] text-white py-12 px-6 relative z-10 shadow-md shrink-0">
         <div className="max-w-4xl mx-auto text-center">
@@ -58,7 +65,6 @@ export default function Home() {
         </div>
       </section>
 
-      {}
       {/* BROWN GRID SECTION WITH WOOD PANEL EFFECT */}
       <section
         className="flex-1 py-12 px-8 relative shadow-inner"
@@ -79,35 +85,22 @@ export default function Home() {
           {/* Books Grid */}
           <div className="flex flex-wrap gap-8">
             
-            {/* Card 1: SARS Guide */}
-            <div className="bg-white p-4 rounded-sm shadow-2xl w-[260px] h-[360px] flex flex-col items-center transition-transform hover:-translate-y-2 cursor-pointer">
-              <div className="w-full h-full bg-zinc-100 relative overflow-hidden border border-zinc-200 mb-4 flex items-center justify-center text-xs text-zinc-400">
-                <img 
-                  src="/filing-system.jpg" 
-                  alt="SARS Guide" 
-                  className="w-full h-full object-cover" 
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} 
-                />
-                <span className="absolute -z-10">Image Missing</span>
+            {books.map((book) => (
+              <div key={book.id} className="bg-white p-4 rounded-sm shadow-2xl w-[260px] h-[360px] flex flex-col items-center transition-transform hover:-translate-y-2 cursor-pointer">
+                <div className="w-full h-full bg-zinc-100 relative overflow-hidden border border-zinc-200 mb-4 flex items-center justify-center text-xs text-zinc-400">
+                  <img 
+                    src={book.src} 
+                    alt={book.alt} 
+                    className="w-full h-full object-cover" 
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} 
+                  />
+                  <span className="absolute -z-10 text-center px-2">{book.alt}</span>
+                </div>
+                <div className="text-yellow-400 text-xl tracking-widest pb-2">★★★★★</div>
               </div>
-              <div className="text-yellow-400 text-xl tracking-widest pb-2">★★★★★</div>
-            </div>
+            ))}
 
-            {/* Card 2: UIF Guide */}
-            <div className="bg-white p-4 rounded-sm shadow-2xl w-[260px] h-[360px] flex flex-col items-center transition-transform hover:-translate-y-2 cursor-pointer">
-              <div className="w-full h-full bg-zinc-100 relative overflow-hidden border border-zinc-200 mb-4 flex items-center justify-center text-xs text-zinc-400">
-                <img 
-                  src="/uif-guide.jpg" 
-                  alt="UIF Guide" 
-                  className="w-full h-full object-cover"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} 
-                />
-                <span className="absolute -z-10">Image Missing</span>
-              </div>
-              <div className="text-yellow-400 text-xl tracking-widest pb-2">★★★★★</div>
-            </div>
-
-            {/* Card 3: Editing Phase Placeholder */}
+            {/* Editing Phase Placeholder */}
             <div className="border-2 border-dashed border-zinc-400/30 bg-[#4a3520]/40 w-[260px] h-[360px] flex flex-col items-center justify-end pb-6 text-zinc-400 relative shadow-lg">
                <div className="absolute inset-0 flex items-center justify-center transform -rotate-45 font-bold tracking-widest text-2xl opacity-30">
                  EDITING PHASE
