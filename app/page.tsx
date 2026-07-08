@@ -5,7 +5,8 @@ import { useState } from "react";
 export default function Home() {
   const [selectedBook, setSelectedBook] = useState<string | null>(null);
 
-  // Verified asset registry
+  // Structural mapping for your publications
+  // Ensure these exact filenames exist in your /public directory
   const books = [
     { id: "before-you-accept", src: "/before-you-accept.jpg", alt: "Before You Accept" },
     { id: "sars-guide", src: "/filing-system.jpg", alt: "SARS Audit-Ready" },
@@ -16,7 +17,7 @@ export default function Home() {
 
   return (
     <main className="h-screen w-screen flex flex-col overflow-hidden bg-black">
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden min-h-0">
         {selectedBook && (
           <div className="w-1/3 min-w-[320px] max-w-[450px] border-r border-zinc-800 bg-black p-8 flex flex-col overflow-y-auto animate-in slide-in-from-left duration-300 z-20">
             <button
@@ -39,7 +40,7 @@ export default function Home() {
           </div>
         )}
 
-        <div className="flex-1 flex flex-col items-center justify-center p-8 relative z-10">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 relative z-10 min-h-0">
           <div
             className={`w-full mx-auto flex justify-center transition-all duration-500 ease-out ${
               selectedBook ? 'max-w-[200px] py-2' : 'max-w-lg md:max-w-xl py-8'
@@ -48,7 +49,10 @@ export default function Home() {
             <img
               src="/phoenix-logo.svg"
               alt="Phoenix Publishing"
-              className="w-full h-auto object-contain drop-shadow-2xl"
+              className="w-full h-auto max-h-[30vh] object-contain drop-shadow-2xl"
+              onError={(e) => {
+                console.error("Logo failed to load:", e);
+              }}
             />
           </div>
           <div className="text-center mt-4">
@@ -79,7 +83,8 @@ export default function Home() {
                 className="w-full h-full object-cover relative z-10"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = "/placeholder.jpg"; // Fallback to prevent red breaks
+                  console.error(`Asset failed: ${book.src}`);
+                  target.style.display = 'none'; 
                 }}
               />
               <span className="text-[10px] text-zinc-500 absolute bottom-2 left-2 z-0 truncate w-[90%]">{book.alt}</span>
