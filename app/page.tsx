@@ -9,7 +9,7 @@ export default function Home() {
   // Structural mapping for your publications
   const books = [
     { id: "before-you-accept", src: "/before-you-accept.jpg", alt: "Before You Accept" },
-    { id: "sars-guide", src: "/sars-audit-ready.jpg", alt: "SARS Audit-Ready" },
+    { id: "sars-guide", src: "/filing-system.jpg", alt: "SARS Audit-Ready" },
     { id: "missing-link", src: "/missing-link.jpg", alt: "Missing Link" },
     { id: "disability-tax", src: "/disability-tax.jpg", alt: "Disability Tax Benefits" },
     { id: "uif-guide", src: "/uif-guide.jpg", alt: "UIF Survival Guide" },
