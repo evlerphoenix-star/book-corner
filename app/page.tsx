@@ -14,9 +14,9 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen font-sans flex flex-col relative bg-[#4a3520]">
+    <main className="min-h-screen font-sans flex flex-col relative bg-[#4a3520] overflow-x-hidden">
       
-      {/* HEADER SECTION - White background, logo left */}
+      {/* HEADER SECTION - Explicitly White */}
       <header className="bg-white w-full px-6 py-4 flex items-center justify-between border-b border-zinc-200 z-20 shrink-0 shadow-sm relative">
         <div className="flex items-center gap-4">
           <img
@@ -41,6 +41,7 @@ export default function Home() {
         </div>
       </header>
 
+      { }
       {/* BLUE BANNER */}
       <section className="bg-[#3170a7] text-white py-8 px-6 relative z-10 shrink-0 border-b-4 border-[#255682]">
         <div className="max-w-4xl mx-auto text-center">
@@ -53,6 +54,7 @@ export default function Home() {
         </div>
       </section>
 
+      {}
       {/* WOOD GRID BACKGROUND */}
       <section
         className="flex-1 py-12 px-8 relative shadow-inner"
@@ -86,22 +88,23 @@ export default function Home() {
                 <div className="text-yellow-400 text-xl tracking-widest pb-1">★★★★★</div>
               </div>
             ))}
-            {/* The editing phase placeholder has been completely removed */}
+            {/* NO PLACEHOLDER HERE */}
           </div>
         </div>
       </section>
 
-      {/* CHECKOUT SIDEBAR OVERLAY - Using fixed positioning so it floats over the UI */}
+      {}
+      {/* CHECKOUT SIDEBAR OVERLAY - Using fixed positioning so it floats over the UI without breaking layout */}
       {checkoutOpen && (
-        <>
+        <div className="fixed inset-0 z-50 flex justify-end">
           {/* Dark Backdrop */}
           <div 
-            className="fixed inset-0 bg-black/60 z-40 transition-opacity" 
+            className="fixed inset-0 bg-black/60 transition-opacity" 
             onClick={() => setCheckoutOpen(false)}
           ></div>
           
           {/* Sidebar */}
-          <div className="fixed top-0 right-0 w-full md:w-96 h-full bg-[#3a2a18] text-white z-50 shadow-2xl flex flex-col border-l border-[#5c4428] animate-in slide-in-from-right duration-300">
+          <div className="relative w-full md:w-96 h-full bg-[#3a2a18] text-white shadow-2xl flex flex-col border-l border-[#5c4428] animate-in slide-in-from-right duration-300">
             <div className="p-6 border-b border-[#5c4428] flex justify-between items-center bg-[#2c1f11]">
               <div className="flex flex-col">
                 <span className="text-[10px] font-bold tracking-widest text-yellow-500 uppercase">Phoenix Publishing</span>
@@ -137,7 +140,7 @@ export default function Home() {
               </button>
             </div>
           </div>
-        </>
+        </div>
       )}
     </main>
   );
