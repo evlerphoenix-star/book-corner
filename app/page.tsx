@@ -18,9 +18,12 @@ export default function Home() {
   const [isProcessing, setIsProcessing] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  const addToCart = (book: any) => setCart([...cart, book]);
+  const addToCart = (book: any) => {
+    setCart([...cart, book]);
+    setIsCartOpen(true); // Automatically open the cart
+  };
+
   const removeFromCart = (indexToRemove: number) => setCart(cart.filter((_, index) => index !== indexToRemove));
-  const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
 
   const scroll = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -34,7 +37,6 @@ export default function Home() {
     setIsProcessing(true);
 
     try {
-      // Map the cart array to match Supabase table columns exactly
       const orders = cart.map(item => ({
         book_id: item.id.toString(),
         book_title: item.title,
@@ -65,7 +67,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-14 w-14 rounded overflow-hidden border border-slate-200 shadow-sm flex items-center justify-center bg-white relative">
-              <img src="/logo-2-blue-s.png" alt="Phoenix Publishing Book Corner" className="object-cover h-full w-full" />
+              <img src="/logo-2-blue-s.png" alt="Phoenix Publishing" className="object-cover h-full w-full" />
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight text-slate-900 leading-none" style={{ fontFamily: 'Georgia, serif' }}>Phoenix Publishing</h1>
@@ -91,7 +93,10 @@ export default function Home() {
             <div ref={carouselRef} className="flex overflow-x-auto snap-x snap-mandatory gap-8 pb-8 pt-4 px-4 scrollbar-hide relative z-10">
               {BOOKS.map((book) => (
                 <div key={book.id} className="snap-center shrink-0 w-56 flex flex-col items-center group perspective-1000">
-                  <div className={`relative w-48 h-64 ${book.color} rounded-r-md rounded-l-sm shadow-[0_10px_20px_rgba(0,0,0,0.5)] border-l-8 border-white/20 transform transition-transform duration-300 group-hover:-translate-y-4 flex flex-col justify-between p-4 cursor-pointer`}>
+                  <div 
+                    onClick={() => addToCart(book)}
+                    className={`relative w-48 h-64 ${book.color} rounded-r-md rounded-l-sm shadow-[0_10px_20px_rgba(0,0,0,0.5)] border-l-8 border-white/20 transform transition-transform duration-300 group-hover:-translate-y-4 flex flex-col justify-between p-4 cursor-pointer`}
+                  >
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-white/10"></div>
                     <div className="text-center mt-4">
                       <h3 className="font-bold text-white text-lg leading-tight drop-shadow-md" style={{ fontFamily: 'Georgia, serif' }}>{book.title}</h3>
@@ -99,9 +104,6 @@ export default function Home() {
                     </div>
                     <div className="flex justify-between items-end mt-auto">
                       <span className="text-white font-bold bg-black/30 px-2 py-1 rounded text-sm">{book.price} rand</span>
-                    </div>
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-r-md rounded-l-sm backdrop-blur-sm">
-                      <button onClick={() => addToCart(book)} className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 rounded shadow-lg transform transition hover:scale-105 active:scale-95">Add to Cart</button>
                     </div>
                   </div>
                   <div className="w-56 h-3 bg-[#6b4226] mt-0 shadow-[0_4px_6px_rgba(0,0,0,0.5)] border-t border-[#8b5a33] rounded-sm relative z-0"></div>
@@ -120,7 +122,7 @@ export default function Home() {
           <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col">
              <div className="p-6 border-b border-slate-100 flex justify-between">
                 <h2 className="text-xl font-bold">Your Basket</h2>
-                <button onClick={() => setIsCartOpen(false)}>Close</button>
+                <button onClick={() => setIsCartOpen(false)} className="text-sm text-slate-500 hover:text-black">Close</button>
              </div>
              <div className="flex-grow overflow-y-auto p-6">
                 {cart.length === 0 ? <p className="text-slate-400">Shelf is empty.</p> : (
@@ -133,7 +135,7 @@ export default function Home() {
                 )}
              </div>
              <div className="p-6 bg-slate-50 border-t">
-                <button onClick={handleCheckout} disabled={cart.length === 0 || isProcessing} className="w-full bg-orange-600 text-white py-4 rounded-lg">
+                <button onClick={handleCheckout} disabled={cart.length === 0 || isProcessing} className="w-full bg-orange-600 text-white py-4 rounded-lg font-bold">
                     {isProcessing ? 'Processing...' : 'Complete Order'}
                 </button>
              </div>
