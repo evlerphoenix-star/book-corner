@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { supabase } from "../utils/supabase";
+import { supabase } from "../../utils/supabase";
 
 const BOOKS = [
   { id: 1, title: "Navigating Sec 18(1)(b)", author: "Phoenix Tax", price: 450, color: "bg-slate-800" },
