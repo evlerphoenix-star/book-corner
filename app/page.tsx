@@ -20,10 +20,8 @@ export default function Home() {
 
   const addToCart = (book: any) => {
     setCart([...cart, book]);
-    setIsCartOpen(true); // Automatically open the cart
+    setIsCartOpen(true);
   };
-
-  const removeFromCart = (indexToRemove: number) => setCart(cart.filter((_, index) => index !== indexToRemove));
 
   const scroll = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -35,7 +33,6 @@ export default function Home() {
   const handleCheckout = async () => {
     if (cart.length === 0) return;
     setIsProcessing(true);
-
     try {
       const orders = cart.map(item => ({
         book_id: item.id.toString(),
@@ -43,27 +40,22 @@ export default function Home() {
         price: item.price,
         status: 'pending'
       }));
-
-      const { error } = await supabase
-        .from('orders')
-        .insert(orders);
-
+      const { error } = await supabase.from('orders').insert(orders);
       if (error) throw error;
-
-      alert(`Success: ${cart.length} items logged to database.`);
+      alert(`Success: ${cart.length} items logged.`);
       setCart([]); 
       setIsCartOpen(false);
     } catch (error) {
       console.error("Supabase Error:", error);
-      alert("Database write failed. Check console for details.");
     } finally {
       setIsProcessing(false);
     }
   };
 
   return (
-    <div className="min-h-screen font-sans text-slate-800 flex flex-col">
-      <header className="w-full bg-white shadow-sm sticky top-0 z-50">
+    <div className="min-h-screen font-sans text-slate-800 flex flex-col relative">
+      {/* Header */}
+      <header className="w-full bg-white shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-14 w-14 rounded overflow-hidden border border-slate-200 shadow-sm flex items-center justify-center bg-white relative">
@@ -81,6 +73,7 @@ export default function Home() {
         </div>
       </header>
 
+      {/* Main Content */}
       <main className="flex-grow flex flex-col items-center py-12 px-4">
         <div className="text-center mb-12 max-w-2xl">
           <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'Georgia, serif' }}>Curated Educational Literature</h2>
@@ -111,18 +104,17 @@ export default function Home() {
               ))}
             </div>
           </div>
-
           <button onClick={() => scroll('right')} className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/90 p-2 rounded-full shadow-lg hover:text-orange-600"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-7 h-7"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
         </div>
       </main>
 
+      {/* Cart Modal - Placed at the very end to ensure fixed positioning works outside of transformation parent */}
       {isCartOpen && (
-        <div className="fixed inset-0 z-[100] flex justify-end">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsCartOpen(false)}></div>
-          <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col">
+        <div className="!fixed inset-0 z-[9999] flex justify-end bg-black/50 backdrop-blur-sm">
+          <div className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col">
              <div className="p-6 border-b border-slate-100 flex justify-between">
                 <h2 className="text-xl font-bold">Your Basket</h2>
-                <button onClick={() => setIsCartOpen(false)} className="text-sm text-slate-500 hover:text-black">Close</button>
+                <button onClick={() => setIsCartOpen(false)} className="text-sm font-bold text-slate-500 hover:text-black">Close</button>
              </div>
              <div className="flex-grow overflow-y-auto p-6">
                 {cart.length === 0 ? <p className="text-slate-400">Shelf is empty.</p> : (
