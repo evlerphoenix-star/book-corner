@@ -1,37 +1,144 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+
+const BOOKS = [
+  { id: 1, title: "Navigating Sec 18(1)(b)", author: "Phoenix Tax", price: 450, color: "bg-slate-800" },
+  { id: 2, title: "The AETHYR Principles", author: "Adrien Scott", price: 320, color: "bg-indigo-900" },
+  { id: 3, title: "Cognitive Guardians", author: "Phoenix Edu", price: 280, color: "bg-emerald-900" },
+  { id: 4, title: "Diagnostic Sales Framework", author: "Adrien Scott", price: 550, color: "bg-red-900" },
+  { id: 5, title: "Flat Earth & Curricula", author: "Research Div", price: 150, color: "bg-amber-900" },
+  { id: 6, title: "Predatory Manipulation", author: "Psych Core", price: 390, color: "bg-zinc-800" },
+];
 
 export default function Home() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cart, setCart] = useState<any[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const addToCart = (book: any) => setCart([...cart, book]);
+  const removeFromCart = (indexToRemove: number) => setCart(cart.filter((_, index) => index !== indexToRemove));
+  const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (carouselRef.current) {
+      const scrollAmount = direction === 'left' ? -300 : 300;
+      carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const handleCheckout = () => {
+    // @ts-ignore - accessing PaystackPop from window
+    if (typeof window === 'undefined' || !window.PaystackPop) {
+      alert("Payment gateway loading. Please try again in a moment.");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    // @ts-ignore
+    const handler = window.PaystackPop.setup({
+      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 
+      email: 'customer@placeholder.com', 
+      amount: cartTotal * 100, 
+      currency: 'ZAR',
+      ref: 'PHX_BOOK_' + Math.floor((Math.random() * 1000000000) + 1),
+      metadata: {
+        custom_fields: [{ display_name: "Cart Items", variable_name: "cart_items", value: cart.map(item => item.title).join(", ") }]
+      },
+      callback: function(response: any){
+        setIsProcessing(false);
+        alert(`Payment complete! Reference: ${response.reference}.`);
+        setCart([]); 
+        setIsCartOpen(false);
+      },
+      onClose: function(){
+        setIsProcessing(false);
+      }
+    });
+
+    handler.openIframe();
+  };
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Book Corner Store</h1>
-      <button 
-        onClick={() => setIsModalOpen(true)}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-      >
-        Open Checkout
-      </button>
-
-      {/* FIXED POSITIONING OVERLAY */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
-            <h2 className="text-lg font-semibold mb-4 text-black">Checkout</h2>
-            <p className="mb-6 text-gray-600">Confirm your order?</p>
-            <div className="flex justify-end gap-3">
-              <button 
-                onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 text-black"
-              >
-                Cancel
-              </button>
-              <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-                Confirm
-              </button>
+    <div className="min-h-screen font-sans text-slate-800 flex flex-col">
+      <header className="w-full bg-white shadow-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-14 w-14 rounded overflow-hidden border border-slate-200 shadow-sm flex items-center justify-center bg-white relative">
+              <img src="/logo-2-blue-s.png" alt="Phoenix Publishing Book Corner" className="object-cover h-full w-full" />
             </div>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight text-slate-900 leading-none" style={{ fontFamily: 'Georgia, serif' }}>Phoenix Publishing</h1>
+              <span className="text-xs font-semibold text-orange-600 uppercase tracking-wider">Book Corner</span>
+            </div>
+          </div>
+          <button onClick={() => setIsCartOpen(true)} className="relative p-2 text-slate-600 hover:text-orange-600 transition-colors">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            {cart.length > 0 && <span className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">{cart.length}</span>}
+          </button>
+        </div>
+      </header>
+
+      <main className="flex-grow flex flex-col items-center py-12 px-4">
+        <div className="text-center mb-12 max-w-2xl">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'Georgia, serif' }}>Curated Educational Literature</h2>
+        </div>
+
+        <div className="w-full max-w-6xl relative">
+          <button onClick={() => scroll('left')} className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/90 p-2 rounded-full shadow-lg hover:text-orange-600"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-7 h-7"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+          
+          <div className="wood-texture p-6 md:p-10 rounded-lg shadow-2xl relative border-t-8 border-b-8 border-[#301d0d]">
+            <div ref={carouselRef} className="flex overflow-x-auto snap-x snap-mandatory gap-8 pb-8 pt-4 px-4 scrollbar-hide relative z-10">
+              {BOOKS.map((book) => (
+                <div key={book.id} className="snap-center shrink-0 w-56 flex flex-col items-center group perspective-1000">
+                  <div className={`relative w-48 h-64 ${book.color} rounded-r-md rounded-l-sm shadow-[0_10px_20px_rgba(0,0,0,0.5)] border-l-8 border-white/20 transform transition-transform duration-300 group-hover:-translate-y-4 flex flex-col justify-between p-4 cursor-pointer`}>
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-white/10"></div>
+                    <div className="text-center mt-4">
+                      <h3 className="font-bold text-white text-lg leading-tight drop-shadow-md" style={{ fontFamily: 'Georgia, serif' }}>{book.title}</h3>
+                      <p className="text-xs text-white/70 mt-3 uppercase tracking-wider">{book.author}</p>
+                    </div>
+                    <div className="flex justify-between items-end mt-auto">
+                      <span className="text-white font-bold bg-black/30 px-2 py-1 rounded text-sm">{book.price} rand</span>
+                    </div>
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-r-md rounded-l-sm backdrop-blur-sm">
+                      <button onClick={() => addToCart(book)} className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 rounded shadow-lg transform transition hover:scale-105 active:scale-95">Add to Cart</button>
+                    </div>
+                  </div>
+                  <div className="w-56 h-3 bg-[#6b4226] mt-0 shadow-[0_4px_6px_rgba(0,0,0,0.5)] border-t border-[#8b5a33] rounded-sm relative z-0"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button onClick={() => scroll('right')} className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/90 p-2 rounded-full shadow-lg hover:text-orange-600"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-7 h-7"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+        </div>
+      </main>
+
+      {isCartOpen && (
+        <div className="fixed inset-0 z-[100] flex justify-end">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsCartOpen(false)}></div>
+          <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col">
+             <div className="p-6 border-b border-slate-100 flex justify-between">
+                <h2 className="text-xl font-bold">Your Basket</h2>
+                <button onClick={() => setIsCartOpen(false)}>Close</button>
+             </div>
+             <div className="flex-grow overflow-y-auto p-6">
+                {cart.length === 0 ? <p className="text-slate-400">Shelf is empty.</p> : (
+                    <ul className="space-y-4">{cart.map((item, i) => (
+                        <li key={i} className="flex justify-between p-4 bg-slate-50 rounded-lg">
+                            <span>{item.title}</span>
+                            <span>{item.price} rand</span>
+                        </li>
+                    ))}</ul>
+                )}
+             </div>
+             <div className="p-6 bg-slate-50 border-t">
+                <button onClick={handleCheckout} disabled={cart.length === 0 || isProcessing} className="w-full bg-orange-600 text-white py-4 rounded-lg">
+                    {isProcessing ? 'Connecting...' : 'Pay with Paystack'}
+                </button>
+             </div>
           </div>
         </div>
       )}
