@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { supabase } from "@/utils/supabase";
 
 const BOOKS = [
   { id: 1, title: "Navigating Sec 18(1)(b)", author: "Phoenix Tax", price: 450, color: "bg-slate-800" },
@@ -28,37 +29,34 @@ export default function Home() {
     }
   };
 
-  const handleCheckout = () => {
-    // @ts-ignore - accessing PaystackPop from window
-    if (typeof window === 'undefined' || !window.PaystackPop) {
-      alert("Payment gateway loading. Please try again in a moment.");
-      return;
-    }
-
+  const handleCheckout = async () => {
+    if (cart.length === 0) return;
     setIsProcessing(true);
 
-    // @ts-ignore
-    const handler = window.PaystackPop.setup({
-      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 
-      email: 'customer@placeholder.com', 
-      amount: cartTotal * 100, 
-      currency: 'ZAR',
-      ref: 'PHX_BOOK_' + Math.floor((Math.random() * 1000000000) + 1),
-      metadata: {
-        custom_fields: [{ display_name: "Cart Items", variable_name: "cart_items", value: cart.map(item => item.title).join(", ") }]
-      },
-      callback: function(response: any){
-        setIsProcessing(false);
-        alert(`Payment complete! Reference: ${response.reference}.`);
-        setCart([]); 
-        setIsCartOpen(false);
-      },
-      onClose: function(){
-        setIsProcessing(false);
-      }
-    });
+    try {
+      // Map the cart array to match Supabase table columns exactly
+      const orders = cart.map(item => ({
+        book_id: item.id.toString(),
+        book_title: item.title,
+        price: item.price,
+        status: 'pending'
+      }));
 
-    handler.openIframe();
+      const { error } = await supabase
+        .from('orders')
+        .insert(orders);
+
+      if (error) throw error;
+
+      alert(`Success: ${cart.length} items logged to database.`);
+      setCart([]); 
+      setIsCartOpen(false);
+    } catch (error) {
+      console.error("Supabase Error:", error);
+      alert("Database write failed. Check console for details.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -136,7 +134,7 @@ export default function Home() {
              </div>
              <div className="p-6 bg-slate-50 border-t">
                 <button onClick={handleCheckout} disabled={cart.length === 0 || isProcessing} className="w-full bg-orange-600 text-white py-4 rounded-lg">
-                    {isProcessing ? 'Connecting...' : 'Pay with Paystack'}
+                    {isProcessing ? 'Processing...' : 'Complete Order'}
                 </button>
              </div>
           </div>
