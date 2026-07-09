@@ -1,22 +1,22 @@
-import type { Metadata } from "next";
-import "./globals.css";
+// @ts-ignore
+import './globals.css';
+import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: "Book Corner",
-  description: "Book Corner Online Store",
+  title: 'Book Corner | Phoenix Publishing',
+  description: 'Curated Educational Literature and Diagnostics',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: ReactNode;
+}) {
   return (
     <html lang="en">
-      <body className="antialiased">
-        <main className="w-full">
-          {children}
-        </main>
+      <body className="antialiased bg-slate-50">
+        {children}
       </body>
     </html>
   );
